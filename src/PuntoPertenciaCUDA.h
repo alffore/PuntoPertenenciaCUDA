@@ -1,0 +1,7 @@
+
+#ifndef PUNTO_PERTENENCIA_CUDA_H
+#define	PUNTO_PERTENENCIA_CUDA_H
+
+
+
+#endif
