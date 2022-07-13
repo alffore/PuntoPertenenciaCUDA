@@ -7,7 +7,7 @@
 #include "egeometricos/Estado.h"
 #include "egeometricos/Municipio.h"
 #include "egeometricos/Manzana.h"
-#include "egeometricos/Punto.h"
+#include "egeometricos/Recurso.h"
 
 using std::string, std::ifstream, std::vector;
 

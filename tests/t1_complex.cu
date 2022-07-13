@@ -1,0 +1,25 @@
+#include <cuda.h>
+#include <math.h>
+#include <cuComplex.h>
+#include <iostream>
+#include <string>
+
+
+int main(){
+
+cuDoubleComplex test,otro,res;
+
+    test.x =0;
+    test.y=1;
+
+    otro.x=4;
+    otro.y=M_PI;
+
+    res=cuCmul(test,otro);
+
+    std::cout<<res.x << " "<<res.y<<std::endl;
+
+    std::cout<< sizeof(cuDoubleComplex) << " "<<sizeof(double)<< std::endl;
+
+    return 0;
+}

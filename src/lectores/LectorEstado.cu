@@ -1,5 +1,9 @@
 #include "../PuntoPertenecia.h"
 
+
+long total_vertices_pest;
+
+
 extern void split(vector<string> &theStringVector, const string &theString, const string &theDelimiter);
 
 
@@ -48,6 +52,8 @@ void parserEstado(string scad,string sep,PEstado pest) {
     //std::cout<<vc[0]<<" "<<vc[1]<<std::endl;
 
     pest->nvertices=atoi(vc[1].c_str());
+    total_vertices_pest+=pest->nvertices;
+
     pest->x=(float*)malloc(sizeof(float)*pest->nvertices);
     pest->y=(float*)malloc(sizeof(float)*pest->nvertices);
 

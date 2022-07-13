@@ -51,7 +51,11 @@ void parserManzana(string scad,string sep,PManzana pmnz) {
     pmnz->x=(float*)malloc(sizeof(float)*pmnz->nvertices);
     pmnz->y=(float*)malloc(sizeof(float)*pmnz->nvertices);
 
-    pmnz->id=atoll(vc[3].c_str());
+    pmnz->sid=vc[3];
+
+    pmnz->e=atoi(vc[4].c_str());
+    pmnz->m=atoi(vc[5].c_str());
+    pmnz->l=atoi(vc[6].c_str());
 
     vector<string> vsc;
     split(vsc, vc[2], ",");

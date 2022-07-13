@@ -1,3 +1,5 @@
+#include <string>
+
 #ifndef MANZANA_H
 #define MANZANA_H
 
@@ -8,7 +10,11 @@ struct Manzana{
 
     int nvertices;
 
-    long long id;
+    std::string sid;
+   
+    int e;
+    int m;
+    int l;
 
 };
 

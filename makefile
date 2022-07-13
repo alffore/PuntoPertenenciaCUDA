@@ -6,7 +6,7 @@ DIR_SRC=./src/
 DIR_OBJ=./obj/
 DIR_BIN=./bin/
 
-all: clean main lectores coordenadas salidas algoritmo
+all: clean main algoritmo lectores coordenadas salidas 
 	$(CLINKER) $(DIR_BIN)puntopertencia_cuda.exe $(DIR_OBJ)*.o $(FLAGS)
 
 

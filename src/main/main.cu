@@ -1,7 +1,7 @@
 #include "../PuntoPertenecia.h"
 
 
-PPunto ppuntos;
+PRecurso prec;
 
 PEstado pest;
 PMunicipio pmun;
@@ -11,12 +11,14 @@ PManzana pmnz;
 unsigned int num_pest;
 unsigned int num_pmun;
 unsigned int num_pmnz;
-unsigned int num_puntos;
+unsigned int num_prec;
 
+extern long total_vertices_pest;
 
 extern int cargaArchivoEstado(string sarchivo,string sep,PEstado pest);
 extern int cargaArchivoMunicipio(string sarchivo,string sep,PMunicipio pmun);
 extern int cargaArchivoManzana(string sarchivo,string sep,PManzana pmnz);
+extern int cargaArchivoRecurso(string sarchivo,string sep,PRecurso prec);
 
 
 void alojaMemoriaEstado(void);
@@ -28,7 +30,8 @@ void liberaMemoriaMunicipio(void);
 void alojaMemoriaManzana(void);
 void liberaMemoriaManzana(void);
 
-
+void alojaMemoriaRecurso(void);
+void liberaMemoriaRecurso(void);
 
 /**
  * @brief 
@@ -41,29 +44,39 @@ int main(int argc, char **argv){
 
     num_pest = atoi((const char *)argv[1]);
 
-    std::cout << "P. Estados "<<num_pest<<std::endl;
+    std::cout << "Pol. Estados: "<<num_pest<<std::endl;
 
     num_pmun = atoi((const char *)argv[3]);
 
-    std::cout << "P. Municipios "<<num_pmun<<std::endl;
+    std::cout << "Pol. Municipios: "<<num_pmun<<std::endl;
 
     num_pmnz = atoi((const char *)argv[5]);
 
-    std::cout << "P. Manzanas "<<num_pmnz<<std::endl;
+    std::cout << "Pol. Manzanas: "<<num_pmnz<<std::endl;
 
+    num_prec = atoi((const char *)argv[7]); 
+
+    std::cout << "Puntos Recursos: "<<num_prec<<std::endl;
 
     alojaMemoriaEstado();
-    alojaMemoriaMunicipio();
-    alojaMemoriaManzana();
+    //alojaMemoriaMunicipio();
+    //alojaMemoriaManzana();
+    alojaMemoriaRecurso();
 
     cargaArchivoEstado(argv[2],"|",pest);
-    cargaArchivoMunicipio(argv[4],"|",pmun);
-    cargaArchivoManzana(argv[6],"|",pmnz);
+    //cargaArchivoMunicipio(argv[4],"|",pmun);
+    //cargaArchivoManzana(argv[6],"|",pmnz);
+    cargaArchivoRecurso(argv[8],"|",prec);
 
-    
 
-    liberaMemoriaManzana();
-    liberaMemoriaMunicipio();
+    std::cout<<"Vertices pol estados: "<<total_vertices_pest<< std::endl;
+
+
+
+
+    liberaMemoriaRecurso();
+    //liberaMemoriaManzana();
+    //liberaMemoriaMunicipio();
     liberaMemoriaEstado();
 
     return 0;
@@ -159,4 +172,22 @@ void liberaMemoriaManzana(void){
     }
 
     free(pmnz);
+}
+
+/**
+ * @brief 
+ * 
+ */
+void alojaMemoriaRecurso(void){
+
+    prec = (PRecurso) malloc(sizeof(struct Recurso)*num_prec);
+
+}
+
+/**
+ * @brief 
+ * 
+ */
+void liberaMemoriaRecurso(void){
+    free(prec);
 }
