@@ -21,5 +21,9 @@ cuDoubleComplex test,otro,res;
 
     std::cout<< sizeof(cuDoubleComplex) << " "<<sizeof(double)<< std::endl;
 
+    double t=0.001;
+
+    std::cout<< cuCmul(make_cuDoubleComplex(t,0),otro).x <<" "<< cuCmul(make_cuDoubleComplex(t,0),otro).y << std::endl;
+
     return 0;
 }

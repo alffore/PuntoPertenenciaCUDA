@@ -17,10 +17,16 @@ extern unsigned int num_prec;
 extern long total_vertices_pest;
 
 //memoria
-extern void alojaMemoriaPolEstado_CPU(unsigned int num_e,long num_v, cuDoubleComplex *pol,PDEstado pdest);
-extern void liberaMemoriaPolEstado_CPU(cuDoubleComplex *pol,PDEstado pdest);
-extern void alojaMemoriaPolEstado_DEV(unsigned int num_e,long num_v, cuDoubleComplex *d_pol,PDEstado d_pdest);
-extern void liberaMemoriaPolEstado_DEV(cuDoubleComplex *d_pol,PDEstado d_pdest);
+extern void alojaMemoriaPolEstado(unsigned int num_e,long num_v, cuDoubleComplex *pol,PDEstado pdest,cuDoubleComplex *d_pol,PDEstado d_pdest);
+extern void liberaMemoriaPolEstado(cuDoubleComplex *pol,PDEstado pdest,cuDoubleComplex *d_pol,PDEstado d_pdest);
+
+//manejo de la memoria de los recursos 
+extern void alojaMemoriaRecurso(unsigned int num_r, PDRec h_pdrec,PDRec d_pdrec);
+extern void liberaMemoriaRecurso(PDRec h_pdrec,PDRec d_pdrec);
+
+//kernel CUDA
+
+extern __global__ void kernel_pertencia_Estado(PDRec d_pdrec,PDEstado d_pestado,cuDoubleComplex *d_pol_edo, size_t num_r,size_t num_e);
 
 //Poligonos
 
@@ -30,9 +36,12 @@ cuDoubleComplex *d_pol_edo;
 PDEstado h_pestado;
 PDEstado d_pestado;
 
+PDRec h_pdrec;
+PDRec d_pdrec;
 
-void copiaInfoEstadoaPol_CPU2DEV();
 
+void copiaInfoEstado2Pol_CPU2DEV();
+void copiaInfoRecurso2DRec_CPU2DEV();
 
 /**
  * Funcion principal del algoritmo, recibe 
@@ -40,15 +49,34 @@ void copiaInfoEstadoaPol_CPU2DEV();
  * 
  */
 void algoritmo(){
+
+    int canti_hilos = 1024;
+    int canti_bloques = (int) ceil((double) num_prec / canti_hilos) + 1;
     
-    alojaMemoriaPolEstado_CPU(num_pest,total_vertices_pest,h_pol_edo,h_pestado);
-    alojaMemoriaPolEstado_DEV(num_pest,total_vertices_pest,d_pol_edo,d_pestado);
+    alojaMemoriaPolEstado(num_pest,total_vertices_pest,h_pol_edo,h_pestado,d_pol_edo,d_pestado);
+    
+    alojaMemoriaRecurso(num_prec,h_pdrec,d_pdrec);
 
-    copiaInfoEstadoaPol_CPU2DEV();
 
+    copiaInfoEstado2Pol_CPU2DEV();
+    copiaInfoRecurso2DRec_CPU2DEV();
 
-    liberaMemoriaPolEstado_DEV(d_pol_edo,d_pestado);
-    liberaMemoriaPolEstado_CPU(h_pol_edo,h_pestado);
+    kernel_pertencia_Estado<<<canti_bloques,canti_hilos>>>(d_pdrec,d_pestado,d_pol_edo,num_prec,num_pest);
+
+    cudaMemcpy(h_pdrec,d_pdrec,num_prec*sizeof(DRec),cudaMemcpyDeviceToHost);
+
+    for(size_t i=0;i<num_prec;i++){
+        PRecurso pr = prec+i;
+        PDRec pdr = h_pdrec+i;
+
+        pr->ne=pdr->e;
+        pr->nm=pdr->m;
+        pr->nl=pdr->l;
+    }
+
+    liberaMemoriaRecurso(h_pdrec,d_pdrec);
+
+    liberaMemoriaPolEstado(h_pol_edo,h_pestado,d_pol_edo,d_pestado);
 
 }
 
@@ -57,28 +85,70 @@ void algoritmo(){
  * @brief 
  * 
  */
-void copiaInfoEstadoaPol_CPU2DEV(){
+void copiaInfoEstado2Pol_CPU2DEV(){
     
     unsigned int ini=0;
 
+    double x_max,y_max;
+    double x_min,y_min;
+
     for(size_t i=0;i<num_pest;i++){
         PEstado p = (pest +i);
-        PDEstado hp = (h_pestado+i);
+        PDEstado h_pde = (h_pestado+i);
 
-        hp->e=p->id;
-        hp->inicio = ini;
-        hp->fin=ini+p->nvertices-1;
+        h_pde->e=p->id;
+        h_pde->inicio = ini;
+        h_pde->fin=ini+p->nvertices-1;
 
-        ini=hp->fin+1;
+        ini=h_pde->fin+1;
+
+        x_max=*(p->x);
+        x_min=x_max;
+        y_max=*(p->y);
+        y_min=y_max;
 
         for(size_t j=0;j<p->nvertices;j++){
-            (h_pol_edo+hp->inicio+j)->x=*(p->x+j);
-            (h_pol_edo+hp->inicio+j)->y=*(p->y+j);
+            (h_pol_edo+h_pde->inicio+j)->x=*(p->x+j);
+            (h_pol_edo+h_pde->inicio+j)->y=*(p->y+j);
+
+            x_max=(x_max<*(p->x+j))?*(p->x+j):x_max;
+            x_min=(x_min>*(p->x+j))?*(p->x+j):x_min;
+
+            y_max=(y_max<*(p->y+j))?*(p->y+j):y_max;
+            y_min=(y_min>*(p->y+j))?*(p->y+j):y_min;
         }
+
+        //cuadrangulo que inscribe el poligono con margen de seguridad
+        h_pde->p_max.x=x_max*1.03;
+        h_pde->p_max.y=y_max*1.03;
+
+        h_pde->p_min.x=x_min*1.03;
+        h_pde->p_min.y=y_min*1.03;
 
     }
 
     cudaMemcpy(d_pestado,h_pestado,num_pest*sizeof(DEstado),cudaMemcpyHostToDevice);
     cudaMemcpy(d_pol_edo,h_pol_edo,total_vertices_pest*sizeof(cuDoubleComplex),cudaMemcpyHostToDevice);
 
+}
+
+/**
+ * @brief 
+ * 
+ */
+void copiaInfoRecurso2DRec_CPU2DEV(){
+
+    for(size_t i=0; i< num_prec ; i++){
+        PRecurso pr =prec+i;
+        PDRec h_pdr = h_pdrec+i;
+
+        h_pdr->e=pr->e;
+        h_pdr->m=pr->m;
+        h_pdr->l=pr->l;
+
+        h_pdr->p.x=pr->x;
+        h_pdr->p.y=pr->y;
+    }
+
+    cudaMemcpy(d_pdrec,h_pdrec,num_prec*sizeof(DRec),cudaMemcpyHostToDevice);
 }

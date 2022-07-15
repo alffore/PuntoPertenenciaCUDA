@@ -13,9 +13,6 @@ struct Recurso{
 
     std::string stipo;
 
-    float lon;
-    float lat;
-
         int e;
         int m;
         int l;

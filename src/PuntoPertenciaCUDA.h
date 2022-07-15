@@ -20,11 +20,12 @@ struct DEstado{
     int e;
     unsigned int inicio;
     unsigned int fin;
+
+    cuDoubleComplex p_max;
+    cuDoubleComplex p_min;
 };
 
 typedef struct DEstado* PDEstado;
-
-
 
 
 #endif
