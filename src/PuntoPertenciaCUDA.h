@@ -11,6 +11,7 @@
 struct DRec{
     int e,m,l;
     cuDoubleComplex p;
+    double res;
 };
 
 typedef struct DRec* PDRec;

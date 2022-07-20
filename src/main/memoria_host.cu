@@ -6,7 +6,14 @@
  * 
  */
 void alojaMemoriaEstado(size_t num_pest, PEstado pest){
+    cout<<num_pest <<endl;
     pest = (PEstado) malloc(sizeof(struct Estado)*num_pest);
+    
+    if(pest == NULL){
+        std::cerr <<"Puntero pest nulo"<<endl;
+        exit(1);
+    }
+
     for(unsigned int i=0;i<num_pest;i++){
         (pest+i)->nvertices=0;
         (pest+i)->x=NULL;
@@ -92,20 +99,3 @@ void liberaMemoriaManzana(size_t num_pmnz,PManzana pmnz){
     free(pmnz);
 }
 
-/**
- * @brief 
- * 
- */
-void alojaMemoriaRecurso(size_t num_prec,PRecurso prec){
-
-    prec = (PRecurso) malloc(sizeof(struct Recurso)*num_prec);
-
-}
-
-/**
- * @brief 
- * 
- */
-void liberaMemoriaRecurso(PRecurso prec){
-    free(prec);
-}

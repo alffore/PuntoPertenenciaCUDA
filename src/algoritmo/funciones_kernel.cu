@@ -19,7 +19,8 @@ __device__ cuDoubleComplex calculaIL(cuDoubleComplex punto,size_t ini,size_t fin
     cuDoubleComplex res;    
     
     double tmax = 100;
-    double delta = 1 / tmax;
+    double delta = 1/tmax;
+    cuDoubleComplex deltac = make_cuDoubleComplex(delta,0);
 
     res.x=0;
     res.y=0;
@@ -27,7 +28,7 @@ __device__ cuDoubleComplex calculaIL(cuDoubleComplex punto,size_t ini,size_t fin
     for(size_t i=ini;i<fin;i++){
         cuDoubleComplex z1=*(d_pol+i);
         cuDoubleComplex z_z=cuCsub(*(d_pol+i+1),z1);
-        cuDoubleComplex aux_num=cuCmul(z_z,make_cuDoubleComplex(delta,0));
+        cuDoubleComplex aux_num=cuCmul(z_z,deltac);
 
         for (double t = 0; t < 1; t += delta) {
             cuDoubleComplex aux_den=cuCmul(z_z,make_cuDoubleComplex(t,0));
@@ -38,7 +39,17 @@ __device__ cuDoubleComplex calculaIL(cuDoubleComplex punto,size_t ini,size_t fin
         }
     }
 
+    cuDoubleComplex z1=*(d_pol+fin);
+    cuDoubleComplex z_z=cuCsub(*(d_pol+ini),z1);
+    cuDoubleComplex aux_num=cuCmul(z_z,deltac);
 
+    for (double t = 0; t < 1; t += delta) {
+            cuDoubleComplex aux_den=cuCmul(z_z,make_cuDoubleComplex(t,0));
+            aux_den=cuCadd(aux_den,z1);
+            aux_den=cuCsub(aux_den,punto);
+            
+            res=cuCadd(res,cuCdiv(aux_num,aux_den));
+    }
 
     return res;
 }
@@ -63,13 +74,15 @@ __global__ void kernel_pertencia_Estado(PDRec d_pdrec,PDEstado d_pestado,cuDoubl
         PDRec pr=(d_pdrec+gtid);
         for(size_t i=0;i<num_e;i++){
             PDEstado pe=(d_pestado+i);
-            if(pe->p_max.x >= pr->p.x && pe->p_max.y >= pr->p.y &&
-               pe->p_min.x <= pr->p.x && pe->p_min.y <= pr->p.y){
-               
+            /*if(pe->p_max.x >= pr->p.x && pe->p_max.y >= pr->p.y &&
+               pe->p_min.x <= pr->p.x && pe->p_min.y <= pr->p.y){*/
+                
+                
+                pr->res=cuCabs(calculaIL(pr->p,pe->inicio,pe->fin,d_pol_edo));
                 if(cuCabs(calculaIL(pr->p,pe->inicio,pe->fin,d_pol_edo))>0){
                     pr->e=pe->e;
                 }
-            }
+            /*}*/
         }
     }
 }

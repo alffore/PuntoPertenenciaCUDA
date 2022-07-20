@@ -1,6 +1,11 @@
 #include "../PuntoPertenecia.h"
 #include "../PuntoPertenciaCUDA.h"
 
+
+double sx_max, sy_max;
+double sx_min, sy_min;
+
+
 //datos objetos
 extern PRecurso prec;
 
@@ -17,12 +22,12 @@ extern unsigned int num_prec;
 extern long total_vertices_pest;
 
 //memoria
-extern void alojaMemoriaPolEstado(unsigned int num_e,long num_v, cuDoubleComplex *pol,PDEstado pdest,cuDoubleComplex *d_pol,PDEstado d_pdest);
-extern void liberaMemoriaPolEstado(cuDoubleComplex *pol,PDEstado pdest,cuDoubleComplex *d_pol,PDEstado d_pdest);
+void alojaMemoriaPolEstado();
+void liberaMemoriaPolEstado();
 
 //manejo de la memoria de los recursos 
-extern void alojaMemoriaRecurso(unsigned int num_r, PDRec h_pdrec,PDRec d_pdrec);
-extern void liberaMemoriaRecurso(PDRec h_pdrec,PDRec d_pdrec);
+void alojaMemoriaRecursoCUDA();
+void liberaMemoriaRecursoCUDA();
 
 //kernel CUDA
 
@@ -53,13 +58,26 @@ void algoritmo(){
     int canti_hilos = 1024;
     int canti_bloques = (int) ceil((double) num_prec / canti_hilos) + 1;
     
-    alojaMemoriaPolEstado(num_pest,total_vertices_pest,h_pol_edo,h_pestado,d_pol_edo,d_pestado);
+    cout<<"Hilos: "<<canti_hilos<<" Bloques: "<<canti_bloques<<endl;
+
+    sx_max =-1E10;
+    sy_max =-1E10;
+
+    sx_min = 1E10;
+    sy_min = 1E10;
+
+
+    alojaMemoriaPolEstado();
     
-    alojaMemoriaRecurso(num_prec,h_pdrec,d_pdrec);
+    alojaMemoriaRecursoCUDA();
 
 
     copiaInfoEstado2Pol_CPU2DEV();
     copiaInfoRecurso2DRec_CPU2DEV();
+
+
+    cout << " coordendas globales sx_min: "<<sx_min<<" sy_min: "<<sy_min<<" sx_max: "<<sx_max<<" sy_max: "<<sy_max<<endl;
+
 
     kernel_pertencia_Estado<<<canti_bloques,canti_hilos>>>(d_pdrec,d_pestado,d_pol_edo,num_prec,num_pest);
 
@@ -72,14 +90,41 @@ void algoritmo(){
         pr->ne=pdr->e;
         pr->nm=pdr->m;
         pr->nl=pdr->l;
+        pr->rescal = pdr->res;
+
+        cout<<"rec i:"<<i<<" rescal:"<<pr->rescal<<endl;
     }
 
-    liberaMemoriaRecurso(h_pdrec,d_pdrec);
+    liberaMemoriaRecursoCUDA(); 
 
-    liberaMemoriaPolEstado(h_pol_edo,h_pestado,d_pol_edo,d_pestado);
+    liberaMemoriaPolEstado();
 
 }
 
+
+void alojaMemoriaPolEstado(){
+    h_pol_edo = (cuDoubleComplex *)malloc(sizeof(cuDoubleComplex)*total_vertices_pest);
+    h_pestado = (PDEstado) malloc(sizeof(DEstado)*num_pest);
+    cudaMalloc((void **) &d_pol_edo, total_vertices_pest*sizeof(cuDoubleComplex));
+    cudaMalloc((void **) &d_pestado,num_pest*sizeof(DEstado));
+}
+
+void liberaMemoriaPolEstado(){
+    cudaFree(d_pestado);
+    cudaFree(d_pol_edo);
+    free(h_pestado);
+    free(h_pol_edo);
+}
+
+void alojaMemoriaRecursoCUDA(){
+    h_pdrec =(PDRec) malloc (sizeof(DRec)*num_prec);
+    cudaMalloc((void **)&d_pdrec,num_prec*sizeof(DRec));
+}
+
+void liberaMemoriaRecursoCUDA(){
+    cudaFree(d_pdrec);
+    free(h_pdrec);
+}
 
 /**
  * @brief 
@@ -93,12 +138,25 @@ void copiaInfoEstado2Pol_CPU2DEV(){
     double x_min,y_min;
 
     for(size_t i=0;i<num_pest;i++){
+        cout << "Poligono: "<< i<<endl;
         PEstado p = (pest +i);
         PDEstado h_pde = (h_pestado+i);
+
+        if(p->nvertices<3){
+            cout <<"Poligono incorrecto (2 o menos vertices): "<<p->id<<endl;
+        }
+
 
         h_pde->e=p->id;
         h_pde->inicio = ini;
         h_pde->fin=ini+p->nvertices-1;
+
+        if(h_pde->fin>total_vertices_pest){
+            std::cerr<<"Asignación superior a lo dimensionado: "<<h_pde->fin<<", max:"<< total_vertices_pest<<endl;
+            exit(1);
+        }
+
+        //cout <<"\t"<<h_pde->inicio<<" "<<h_pde->fin<<" "<<ini<<" TV: "<<total_vertices_pest<<endl;
 
         ini=h_pde->fin+1;
 
@@ -107,7 +165,14 @@ void copiaInfoEstado2Pol_CPU2DEV(){
         y_max=*(p->y);
         y_min=y_max;
 
+    
         for(size_t j=0;j<p->nvertices;j++){
+
+            if(h_pde->inicio+j > total_vertices_pest){
+                std::cerr<<"Asignación superior a lo dimensionado: "<<h_pde->inicio+j <<", max:"<< total_vertices_pest<<endl;
+                exit(1);
+            }
+
             (h_pol_edo+h_pde->inicio+j)->x=*(p->x+j);
             (h_pol_edo+h_pde->inicio+j)->y=*(p->y+j);
 
@@ -116,6 +181,12 @@ void copiaInfoEstado2Pol_CPU2DEV(){
 
             y_max=(y_max<*(p->y+j))?*(p->y+j):y_max;
             y_min=(y_min>*(p->y+j))?*(p->y+j):y_min;
+
+
+            sx_max=(sx_max<x_max)?x_max:sx_max;
+            sy_max=(sy_max<y_max)?y_max:sy_max;
+            sx_min=(sx_min>x_min)?x_min:sx_min;
+            sy_min=(sy_min>y_min)?y_min:sy_min;
         }
 
         //cuadrangulo que inscribe el poligono con margen de seguridad
@@ -124,6 +195,7 @@ void copiaInfoEstado2Pol_CPU2DEV(){
 
         h_pde->p_min.x=x_min*1.03;
         h_pde->p_min.y=y_min*1.03;
+    
 
     }
 
@@ -142,12 +214,16 @@ void copiaInfoRecurso2DRec_CPU2DEV(){
         PRecurso pr =prec+i;
         PDRec h_pdr = h_pdrec+i;
 
-        h_pdr->e=pr->e;
-        h_pdr->m=pr->m;
-        h_pdr->l=pr->l;
+        h_pdr->e=0;
+        h_pdr->m=0;
+        h_pdr->l=0;
 
         h_pdr->p.x=pr->x;
         h_pdr->p.y=pr->y;
+
+        if(pr->x > sx_max || pr->x < sx_min || pr->y > sy_max || pr->y < sy_min){
+            cout<<"Rec fuera de la region: "<<i <<" id: "<<pr->id<<" tipo: "<<pr->stipo<<" x:"<<pr->x<<" y:"<<pr->y<<endl;
+        }
     }
 
     cudaMemcpy(d_pdrec,h_pdrec,num_prec*sizeof(DRec),cudaMemcpyHostToDevice);

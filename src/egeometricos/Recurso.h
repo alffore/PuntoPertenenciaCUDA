@@ -21,9 +21,11 @@ struct Recurso{
         int nm;
         int nl;
 
-    int id_mnz;
+        double rescal;
+
+    /*int id_mnz;
     int id_ent;
-    int id_mun;
+    int id_mun;*/
 };
 
 

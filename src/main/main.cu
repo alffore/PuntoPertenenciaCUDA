@@ -3,7 +3,7 @@
 
 PRecurso prec;
 
-PEstado pest;
+PEstado pest=nullptr;
 PMunicipio pmun;
 PManzana pmnz;
 
@@ -26,11 +26,11 @@ extern int cargaArchivoRecurso(string sarchivo,string sep,PRecurso prec);
 extern void algoritmo();
 
 // salidas
-extern void salidaRecurso(PRecurso prec, size_t num_prec, string snomarch);
+extern void salidaRecursoE(PRecurso prec, size_t num_prec, string snomarch);
 
 // manejo de memoria 
-extern void alojaMemoriaEstado(size_t num_pest, PEstado pest);
-extern void liberaMemoriaEstado(size_t num_pest, PEstado pest);
+ void alojaMemoriaEstado();
+ void liberaMemoriaEstado();
 
 extern void alojaMemoriaMunicipio(size_t num_pmun,PMunicipio pmun);
 extern void liberaMemoriaMunicipio(size_t num_pmun,PMunicipio pmun);
@@ -38,8 +38,8 @@ extern void liberaMemoriaMunicipio(size_t num_pmun,PMunicipio pmun);
 extern void alojaMemoriaManzana(size_t num_pmnz,PManzana pmnz);
 extern void liberaMemoriaManzana(size_t num_pmnz,PManzana pmnz);
 
-extern void alojaMemoriaRecurso(size_t num_prec,PRecurso prec);
-extern void liberaMemoriaRecurso(PRecurso prec);
+void alojaMemoriaRecurso();
+void liberaMemoriaRecurso();
 
 
 string snomarch_edo="/home/alfonso/devel/renic.git/renic.git/utiles/checa_iter_cg/ver2/salida/problemas_ent_cuda.txt";
@@ -69,10 +69,11 @@ int main(int argc, char **argv){
 
     std::cout << "Puntos Recursos: "<<num_prec<<std::endl;
 
-    alojaMemoriaEstado(num_pest,pest);
+    alojaMemoriaEstado();
+
     //alojaMemoriaMunicipio();
     //alojaMemoriaManzana();
-    alojaMemoriaRecurso(num_prec,prec);
+    alojaMemoriaRecurso();
 
     cargaArchivoEstado(argv[2],"|",pest);
     //cargaArchivoMunicipio(argv[4],"|",pmun);
@@ -84,14 +85,72 @@ int main(int argc, char **argv){
 
     algoritmo();
 
-    salidaRecurso(prec,num_prec,snomarch_edo);
+    salidaRecursoE(prec,num_prec,snomarch_edo);
 
 
-    liberaMemoriaRecurso(prec);
+    liberaMemoriaRecurso();
     //liberaMemoriaManzana();
     //liberaMemoriaMunicipio();
-    liberaMemoriaEstado(num_pest,pest);
+
+    liberaMemoriaEstado();
 
     return 0;
 }
 
+
+/**
+ * @brief 
+ * 
+ */
+void alojaMemoriaEstado(){
+
+    pest = (PEstado) malloc(sizeof(struct Estado)*num_pest);
+    
+    if(pest == NULL){
+        std::cerr <<"Puntero pest nulo"<<endl;
+        exit(1);
+    }
+
+    for(unsigned int i=0;i<num_pest;i++){
+        (pest+i)->nvertices=0;
+        (pest+i)->x=NULL;
+        (pest+i)->y=NULL;
+    }
+}
+
+
+/**
+ * @brief 
+ * 
+ */
+void liberaMemoriaEstado(){
+
+    for(unsigned int i=0;i<num_pest;i++){
+        if((pest+i)->nvertices>0){
+            //std::cout << "libera: "<<i<<std::endl;
+            free((pest+i)->x);
+            free((pest+i)->y);
+        }
+    }
+
+    free(pest);
+}
+
+
+/**
+ * @brief 
+ * 
+ */
+void alojaMemoriaRecurso(){
+
+    prec = (PRecurso) malloc(sizeof(struct Recurso)*num_prec);
+
+}
+
+/**
+ * @brief 
+ * 
+ */
+void liberaMemoriaRecurso(){
+    free(prec);
+}
