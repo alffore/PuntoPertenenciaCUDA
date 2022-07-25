@@ -21,6 +21,9 @@ extern unsigned int num_prec;
 
 extern long total_vertices_pest;
 
+//debug
+extern void debug_imprimeSegemntoPol(PDEstado h_pde,cuDoubleComplex *h_pol);
+
 //memoria
 void alojaMemoriaPolEstado();
 void liberaMemoriaPolEstado();
@@ -138,7 +141,7 @@ void copiaInfoEstado2Pol_CPU2DEV(){
     double x_min,y_min;
 
     for(size_t i=0;i<num_pest;i++){
-        cout << "Poligono: "<< i<<endl;
+        //cout << "Poligono: "<< i<<endl;
         PEstado p = (pest +i);
         PDEstado h_pde = (h_pestado+i);
 
@@ -173,14 +176,19 @@ void copiaInfoEstado2Pol_CPU2DEV(){
                 exit(1);
             }
 
-            (h_pol_edo+h_pde->inicio+j)->x=*(p->x+j);
-            (h_pol_edo+h_pde->inicio+j)->y=*(p->y+j);
+            cuDoubleComplex * auxh_pe = h_pol_edo+j+h_pde->inicio;
+        
+            double x=*(p->x+j);
+            double y=*(p->y+j);
 
-            x_max=(x_max<*(p->x+j))?*(p->x+j):x_max;
-            x_min=(x_min>*(p->x+j))?*(p->x+j):x_min;
+            auxh_pe->x=x;
+            auxh_pe->y=y;
 
-            y_max=(y_max<*(p->y+j))?*(p->y+j):y_max;
-            y_min=(y_min>*(p->y+j))?*(p->y+j):y_min;
+            x_max=(x_max<x)?x:x_max;
+            x_min=(x_min>x)?x:x_min;
+
+            y_max=(y_max<y)?y:y_max;
+            y_min=(y_min>y)?y:y_min;
 
 
             sx_max=(sx_max<x_max)?x_max:sx_max;
@@ -198,6 +206,10 @@ void copiaInfoEstado2Pol_CPU2DEV(){
     
 
     }
+
+    
+    //debug_imprimeSegemntoPol(h_pestado+100,h_pol_edo);
+
 
     cudaMemcpy(d_pestado,h_pestado,num_pest*sizeof(DEstado),cudaMemcpyHostToDevice);
     cudaMemcpy(d_pol_edo,h_pol_edo,total_vertices_pest*sizeof(cuDoubleComplex),cudaMemcpyHostToDevice);

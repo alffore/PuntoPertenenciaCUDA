@@ -8,7 +8,7 @@ DIR_BIN=./bin/
 
 FLAGS= -lproj
 
-all: clean main algoritmo lectores coordenadas salidas 
+all: clean main algoritmo lectores coordenadas salidas test
 	$(CLINKER) $(DIR_BIN)puntopertencia_cuda.exe $(DIR_OBJ)*.o $(FLAGS)
 
 
@@ -36,6 +36,9 @@ coordenadas:
 	$(CC) $(DIR_SRC)coordenadas/*.cu 
 	@mv *.o $(DIR_OBJ)
 
+test:
+	$(CC) $(DIR_SRC)test/*.cu 
+	@mv *.o $(DIR_OBJ)
 
 clean:
 	@rm -rfv $(DIR_OBJ)*.o

@@ -62,10 +62,17 @@ void parserEstado(string scad,string sep,PEstado pest) {
     vector<string> vsc;
     split(vsc, vc[2], ",");
 
-    //std::cout<<pest->nvertices<<"::"<<vsc.size()<<std::endl;
+    cout<<pest->nvertices<<"::"<<vsc.size()<<std::endl;
 
-    for(unsigned int i=0;i<pest->nvertices;i+=2){
-        *(pest->x+i)=atof(vsc[i].c_str());
-        *(pest->y+i)=atof(vsc[i+1].c_str());
+    /*for(unsigned int i=0;i<pest->nvertices;i+=2){
+        unsigned int j= (unsigned int)i/2;
+        *(pest->x+j)=atof(vsc[i].c_str());
+        *(pest->y+j)=atof(vsc[i+1].c_str());
+    }*/
+
+    for(unsigned int j=0;j<pest->nvertices;j++){
+        
+        *(pest->x+j)=atof(vsc[2*j].c_str());
+        *(pest->y+j)=atof(vsc[2*j+1].c_str());
     }
 }

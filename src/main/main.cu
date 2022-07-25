@@ -28,9 +28,12 @@ extern void algoritmo();
 // salidas
 extern void salidaRecursoE(PRecurso prec, size_t num_prec, string snomarch);
 
+//depuracion
+extern void debug_imprimeConPEstado(PEstado pestado);
+
 // manejo de memoria 
- void alojaMemoriaEstado();
- void liberaMemoriaEstado();
+void alojaMemoriaEstado();
+void liberaMemoriaEstado();
 
 extern void alojaMemoriaMunicipio(size_t num_pmun,PMunicipio pmun);
 extern void liberaMemoriaMunicipio(size_t num_pmun,PMunicipio pmun);
@@ -76,6 +79,7 @@ int main(int argc, char **argv){
     alojaMemoriaRecurso();
 
     cargaArchivoEstado(argv[2],"|",pest);
+    debug_imprimeConPEstado(pest+100);
     //cargaArchivoMunicipio(argv[4],"|",pmun);
     //cargaArchivoManzana(argv[6],"|",pmnz);
     cargaArchivoRecurso(argv[8],"|",prec);
