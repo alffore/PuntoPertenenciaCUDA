@@ -2,12 +2,12 @@
 #define RECURSO_H
 
 #include <string>
+#include "Punto.h"
 
 struct Recurso
 {
 
-    float x;
-    float y;
+    Punto p;
 
     unsigned int id;
 
@@ -20,12 +20,13 @@ struct Recurso
     int ne;
     int nm;
     int nl;
+
     std::string sid_mnz;
     std::string sid_ageb;
 
-    double rescal;
+
 };
 
-typedef struct Recurso *PRecurso;
+
 
 #endif

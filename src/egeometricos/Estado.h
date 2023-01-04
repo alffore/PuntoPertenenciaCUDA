@@ -1,16 +1,14 @@
 #ifndef ESTADO_H
 #define ESTADO_H
 
+#include <vector>
+#include "Punto.h"
 struct Estado
 {
 
-    float *x;
-    float *y;
+    std::vector<Punto> vp;
 
-    int nvertices;
     int id;
 };
-
-typedef struct Estado *PEstado;
 
 #endif

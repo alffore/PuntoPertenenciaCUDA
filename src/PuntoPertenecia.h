@@ -5,8 +5,10 @@
 #include <algorithm>
 #include <cmath>
 
+#include "egeometricos/Punto.h"
 #include "egeometricos/Estado.h"
 #include "egeometricos/Municipio.h"
+#include "egeometricos/Ageb.h"
 #include "egeometricos/Manzana.h"
 #include "egeometricos/Recurso.h"
 

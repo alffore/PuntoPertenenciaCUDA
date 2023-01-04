@@ -6,7 +6,7 @@
 extern void split(vector<string> &theStringVector, const string &theString, const string &theDelimiter);
 
 
-void parserRecursov2(string scad,string sep,PRecurso prec, CCG2CCL &mccg);
+void parserRecurso(string scad,string sep,vector<Recurso> &vrec, CCG2CCL &mccg);
 
 
 /**
@@ -17,7 +17,7 @@ void parserRecursov2(string scad,string sep,PRecurso prec, CCG2CCL &mccg);
  * @param prec 
  * @return int 
  */
-int cargaArchivoRecurso(string sarchivo,string sep,PRecurso prec){
+int cargaArchivoRecurso(string sarchivo,string sep,vector<Recurso> &vrec){
   
     string sline;
 
@@ -32,11 +32,11 @@ int cargaArchivoRecurso(string sarchivo,string sep,PRecurso prec){
 
     miarch.open(sarchivo.c_str(), ifstream::in);
 
-    unsigned int i=0;
+
     while (getline(miarch, sline)) {
 
-        parserRecursov2(sline,sep,prec+i,c2c);
-        i++;
+        parserRecurso(sline,sep,vrec,c2c);
+
     }
 
     miarch.close();
@@ -54,8 +54,9 @@ int cargaArchivoRecurso(string sarchivo,string sep,PRecurso prec){
  * @param prec 
  * @param mccg 
  */
-void parserRecursov2(string scad,string sep,PRecurso prec, CCG2CCL &mccg) {
+void parserRecurso(string scad,string sep,vector<Recurso> &vrec, CCG2CCL &mccg) {
 
+    Recurso rec;
     vector<string> vc;
 
     double este,norte;
@@ -64,20 +65,19 @@ void parserRecursov2(string scad,string sep,PRecurso prec, CCG2CCL &mccg) {
 
     mccg.convierte(atof(vc[0].c_str()),atof(vc[1].c_str()),este,norte);
         
-    prec->x=este/10000;
-    prec->y=norte/10000;
+    rec.p.x=este/10000;
+    rec.p.y=norte/10000;
 
-    prec->id = atoi(vc[2].c_str());
-    prec->stipo=vc[3];
+    rec.id = atoi(vc[2].c_str());
+    rec.stipo=vc[3];
 
-    prec->e=atoi(vc[4].c_str());
-    prec->m=atoi(vc[5].c_str());
-    prec->l=atoi(vc[6].c_str());
+    rec.e=atoi(vc[4].c_str());
+    rec.m=atoi(vc[5].c_str());
+    rec.l=atoi(vc[6].c_str());
 
-    prec->ne=0;
-    prec->nm=0;
-    prec->nl=0;
+    rec.ne=0;
+    rec.nm=0;
+    rec.nl=0;
 
-    prec->rescal =-1;
-
+    vrec.push_back(rec);
 }

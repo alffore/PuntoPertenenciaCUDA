@@ -1,25 +1,19 @@
 #include "../PuntoPertenecia.h"
-#include "../PuntoPertenciaCUDA.h"
-
-long total_vertices_pest;
 
 extern void split(vector<string> &theStringVector, const string &theString, const string &theDelimiter);
 
-int cargaArchivoEstado(string sarchivo, string sep, PEstado pest);
-void parserEstado(string scad, string sep, PEstado pest);
-
-/*bool checacuCDC(cuDoubleComplex z1,cuDoubleComplex z2);
-void parserEstado_v2(string scad,string sep,PEstado pest);*/
+int cargaArchivoEstado(string sarchivo, string sep, vector<Estado> &vest);
+void parserEstado(string scad, string sep, vector<Estado> &vest);
 
 /**
  * @brief
  *
  * @param sarchivo
  * @param sep
- * @param pest
+ * @param vest
  * @return int
  */
-int cargaArchivoEstado(string sarchivo, string sep, PEstado pest)
+int cargaArchivoEstado(string sarchivo, string sep, vector<Estado> &vest)
 {
 
     string sline;
@@ -28,15 +22,14 @@ int cargaArchivoEstado(string sarchivo, string sep, PEstado pest)
 
     miarch.open(sarchivo.c_str(), ifstream::in);
 
-    unsigned int i = 0;
+
     while (getline(miarch, sline))
     {
-        parserEstado(sline, sep, pest + i);
-        i++;
+        parserEstado(sline, sep, vest);
+
     }
 
     miarch.close();
-
     return 0;
 }
 
@@ -45,68 +38,31 @@ int cargaArchivoEstado(string sarchivo, string sep, PEstado pest)
  *
  * @param scad
  * @param sep
+ * @param vest
  */
-void parserEstado(string scad, string sep, PEstado pest)
+void parserEstado(string scad, string sep, vector<Estado> &vest)
 {
+    Estado est;
 
     vector<string> vc;
-
     split(vc, scad, sep);
-    // std::cout<<vc[0]<<" "<<vc[1]<<std::endl;
 
-    pest->nvertices = atoi(vc[1].c_str());
-    total_vertices_pest += pest->nvertices;
-
-    pest->x = (float *)malloc(sizeof(float) * pest->nvertices);
-    pest->y = (float *)malloc(sizeof(float) * pest->nvertices);
-
-    pest->id = atoi(vc[3].c_str());
+    est.id = atoi(vc[3].c_str());
 
     vector<string> vsc;
     split(vsc, vc[2], ",");
 
-    cout << pest->nvertices << "::" << vsc.size() << endl;
+    size_t num_2v = vsc.size() / 2;
 
-    for (unsigned int j = 0; j < pest->nvertices; j++)
+    for (size_t j = 0; j < num_2v; j++)
     {
-        *(pest->x + j) = atof(vsc[2 * j].c_str()) / 10000;
-        *(pest->y + j) = atof(vsc[2 * j + 1].c_str()) / 10000;
-    }
-}
+        Punto p;
 
-/*
-void parserEstado_v2(string scad,string sep,PEstado pest) {
+        p.x = atof(vsc[2 * j].c_str()) / 10000;
+        p.y = atof(vsc[2 * j + 1].c_str()) / 10000;
 
-    vector<string> vc;
-
-    split(vc, scad, sep);
-
-    unsigned int vertices = atoi(vc[1].c_str());
-
-    pest->id=atoi(vc[3].c_str());
-
-    vector<string> vsc;
-    split(vsc, vc[2], ",");
-
-    vector<cuDoubleComplex> v_c;
-
-
-    for(unsigned int j =0; j<vertices; j++){
-
-        v_c.push_back(make_cuDoubleComplex(atof(vsc[2*j].c_str())/1000,
-        atof(vsc[2*j+1].c_str())/1000));
-
+        est.vp.push_back(p);
     }
 
-    cout<<"e: " << pest->id<<" vector size: "<<v_c.size();
-
-    v_c.erase(unique(v_c.begin(),v_c.end(),checacuCDC),v_c.end());
-
-    cout<<" vector size unique erase: "<<v_c.size()<<endl;
+    vest.push_back(est);
 }
-
-
-bool checacuCDC(cuDoubleComplex z1,cuDoubleComplex z2){
-    return (z1.x==z2.x && z1.y==z2.y);
-}
-*/
