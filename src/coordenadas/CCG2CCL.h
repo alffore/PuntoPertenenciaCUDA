@@ -29,7 +29,7 @@ public:
 
     virtual ~ CCG2CCL();
 
-    void convierte(double lon, double lat, double&este, double& norte);
+    void convierte(float lon, float lat, float&este, float& norte);
 };
 
 

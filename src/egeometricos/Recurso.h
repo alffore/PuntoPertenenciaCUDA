@@ -24,7 +24,7 @@ struct Recurso
     std::string sid_mnz;
     std::string sid_ageb;
 
-
+float res; // depuracion
 };
 
 

@@ -38,7 +38,7 @@ CCG2CCL::~CCG2CCL() {
 
 }
 
-void CCG2CCL::convierte(double lon , double lat, double& este, double& norte) {
+void CCG2CCL::convierte(float lon , float lat, float& este, float& norte) {
    PJ_COORD a = proj_coord(lon, lat, 0,0);
    PJ_COORD b = proj_trans(P,PJ_FWD,a);
 

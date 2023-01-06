@@ -1,17 +1,14 @@
 #ifndef MUNICIPIO_H
 #define MUNICIPIO_H
 
-struct Municipio{
+#include <vector>
+#include "Punto.h"
+struct Municipio
+{
 
-    float *x;
-    float *y;
+    std::vector<Punto> vp;
 
-    int nvertices;
     int id;
-
 };
-
-typedef struct Municipio* PMunicipio;
-
 
 #endif

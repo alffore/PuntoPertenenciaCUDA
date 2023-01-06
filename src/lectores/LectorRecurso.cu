@@ -23,8 +23,6 @@ int cargaArchivoRecurso(string sarchivo,string sep,vector<Recurso> &vrec){
 
     ifstream miarch;
 
-    //ITRF2CCL mtc;
-
     string sp1 = "EPSG:4326";
     string sp2 = "EPSG:6372";
 
@@ -34,16 +32,13 @@ int cargaArchivoRecurso(string sarchivo,string sep,vector<Recurso> &vrec){
 
 
     while (getline(miarch, sline)) {
-
         parserRecurso(sline,sep,vrec,c2c);
-
     }
 
     miarch.close();
 
     return 0;  
 }
-
 
 
 /**
@@ -59,7 +54,7 @@ void parserRecurso(string scad,string sep,vector<Recurso> &vrec, CCG2CCL &mccg) 
     Recurso rec;
     vector<string> vc;
 
-    double este,norte;
+    float este,norte;
 
     split(vc, scad, sep);
 

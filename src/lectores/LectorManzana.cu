@@ -2,19 +2,19 @@
 
 extern void split(vector<string> &theStringVector, const string &theString, const string &theDelimiter);
 
-int cargaArchivoManzana(string sarchivo,string sep,PManzana pmnz);
-void parserManzana(string scad,string sep,PManzana pmnz);
-
+int cargaArchivoManzana(string sarchivo, string sep, vector<Manzana> &vmnz);
+void parserManzana(string scad, string sep, vector<Manzana> &vmnz);
 
 /**
- * @brief 
- * 
- * @param sarchivo 
- * @param sep 
- * @param pmnz 
- * @return int 
+ * @brief
+ *
+ * @param sarchivo
+ * @param sep
+ * @param pmnz
+ * @return int
  */
-int cargaArchivoManzana(string sarchivo,string sep, PManzana pmnz){
+int cargaArchivoManzana(string sarchivo, string sep, vector<Manzana> &vmnz)
+{
 
     string sline;
 
@@ -22,9 +22,10 @@ int cargaArchivoManzana(string sarchivo,string sep, PManzana pmnz){
 
     miarch.open(sarchivo.c_str(), ifstream::in);
 
-    unsigned int i=0;
-    while (getline(miarch, sline)) {
-        parserManzana(sline,sep,pmnz+i);
+    unsigned int i = 0;
+    while (getline(miarch, sline))
+    {
+        parserManzana(sline, sep, vmnz);
         i++;
     }
 
@@ -34,34 +35,40 @@ int cargaArchivoManzana(string sarchivo,string sep, PManzana pmnz){
 }
 
 /**
- * @brief 
- * 
- * @param scad 
- * @param sep 
- * @param pmnz 
+ * @brief
+ *
+ * @param scad
+ * @param sep
+ * @param pmnz
  */
-void parserManzana(string scad,string sep,PManzana pmnz) {
+void parserManzana(string scad, string sep, vector<Manzana> &vmnz)
+{
+    Manzana mnz;
 
     vector<string> vc;
 
     split(vc, scad, sep);
- 
-    pmnz->nvertices=atoi(vc[1].c_str());
-    pmnz->x=(float*)malloc(sizeof(float)*pmnz->nvertices);
-    pmnz->y=(float*)malloc(sizeof(float)*pmnz->nvertices);
 
-    pmnz->sid=vc[3];
+    mnz.sid = vc[3];
 
-    pmnz->e=atoi(vc[4].c_str());
-    pmnz->m=atoi(vc[5].c_str());
-    pmnz->l=atoi(vc[6].c_str());
+    mnz.e = atoi(vc[4].c_str());
+    mnz.m = atoi(vc[5].c_str());
+    mnz.l = atoi(vc[6].c_str());
 
     vector<string> vsc;
     split(vsc, vc[2], ",");
 
+    size_t num_2v = vsc.size() / 2;
 
-    for(unsigned int i=0;i<pmnz->nvertices;i+=2){
-        *(pmnz->x+i)=atof(vsc[i].c_str());
-        *(pmnz->y+i)=atof(vsc[i+1].c_str());
+    for (size_t j = 0; j < num_2v; j++)
+    {
+        Punto p;
+
+        p.x = atof(vsc[2 * j].c_str()) / 10000;
+        p.y = atof(vsc[2 * j + 1].c_str()) / 10000;
+
+        mnz.vp.push_back(p);
     }
+
+    vmnz.push_back(mnz);
 }

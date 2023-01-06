@@ -1,14 +1,13 @@
-#include <string>
-
 #ifndef AGEB_H
 #define AGEB_H
 
+#include <string>
+#include <vector>
+#include "Punto.h"
+
 struct Ageb
 {
-    float *x;
-    float *y;
-
-    int nvertices;
+    std::vector<Punto> vp;
 
     std::string sid;
 
@@ -16,7 +15,5 @@ struct Ageb
     int m;
     int l;
 };
-
-typedef struct Ageb *PAgeb;
 
 #endif
