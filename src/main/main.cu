@@ -36,14 +36,14 @@ int main(int argc, char **argv)
     cargaArchivoEstado(argv[1], "|", vest);
     cout << "Total de poligonos de estado: " << vest.size() << endl;
 
-    /*cargaArchivoMunicipio(argv[2], "|", vmun);
+    cargaArchivoMunicipio(argv[2], "|", vmun);
     cout << "Total de poligonos de municipio: " << vmun.size() << endl;
 
     cargaArchivoAgeb(argv[3], "|", vageb);
     cout << "Total de poligonos de AGEB: " << vageb.size() << endl;
 
     cargaArchivoManzana(argv[4], "|", vmnz);
-    cout << "Total de poligonos de Manzana: " << vmnz.size() << endl;*/
+    cout << "Total de poligonos de Manzana: " << vmnz.size() << endl;
 
     cargaArchivoRecurso(argv[5], "|", vrec);
     cout << "Total de recursos: " << vrec.size() << endl;
@@ -52,6 +52,12 @@ int main(int argc, char **argv)
     
     algoritmo();
 
+    // for(size_t i=55990; i<55992;i++){
+    //     cout <<i<<": "<< vageb[i].sid << " "<< vageb[i].e<<" "<< vageb[i].m<<" "<< vageb[i].l<<" "<<endl;
+    //     for(auto &p : vageb[i].vp){
+    //         cout <<"\t"<<p.x<<" "<<p.y<<endl;
+    //     }
+    // }
 
 
 

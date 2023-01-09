@@ -6,7 +6,7 @@
 // Recurso
 struct DRec{
     long id_e,id_m,id_l;
-    int id_ageb,id_mnz;
+    long id_ageb,id_mnz;
     float x;
     float y;
     float res;  //depuracion

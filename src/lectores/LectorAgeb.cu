@@ -46,6 +46,10 @@ void parserAgeb(string scad, string sep, vector<Ageb> &vageb)
     vector<string> vc;
 
     split(vc, scad, sep);
+    if (vc[8] == "Rural")
+    {
+        return;
+    }
 
     ageb.sid = vc[3];
     ageb.e = atoi(vc[4].c_str());
@@ -68,4 +72,6 @@ void parserAgeb(string scad, string sep, vector<Ageb> &vageb)
     }
 
     vageb.push_back(ageb);
+
+    // cout <<"AGEB: "<< ageb.sid <<" "<<ageb.e<<" "<< ageb.m<<" "<<ageb.l<<": "<<ageb.vp.size()<<": "<<atoi(vc[1].c_str())<<" ::"<<atoi(vc[1].c_str())-ageb.vp.size()<<":"<<endl;
 }
