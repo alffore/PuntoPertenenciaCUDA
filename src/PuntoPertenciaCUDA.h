@@ -15,7 +15,7 @@ struct DRec{
 typedef struct DRec* PDRec;
 
 // Poligono entrada
-struct DEP{
+struct __align__(8) DEP{
     float x;
     float y;
 };
