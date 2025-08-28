@@ -6,4 +6,4 @@ a_pol_mnz="/fhome/alfonso/devel/CPV2020/MGM/mnz/todos.int"
 
 a_rec="/home/alfonso/devel/renic/renic.git/utiles/checa_iter_cg/ver2/ver2/origen/recursos_0.txt"
 
-./puntopertencia_cuda.exe $a_pol_edo $a_pol_mun $a_pol_ageb $a_pol_mnz $a_rec
+time ./puntopertencia_cuda.exe $a_pol_edo $a_pol_mun $a_pol_ageb $a_pol_mnz $a_rec
