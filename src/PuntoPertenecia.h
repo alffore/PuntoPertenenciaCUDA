@@ -13,7 +13,7 @@
 #include "egeometricos/Manzana.h"
 #include "egeometricos/Recurso.h"
 
-using std::string, std::ifstream, std::vector, std::cout, std::endl;
+using std::string, std::ifstream, std::vector, std::cout, std::endl, std::ofstream;
 
 
 
