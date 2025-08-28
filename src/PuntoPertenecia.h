@@ -1,6 +1,5 @@
 #include <string>
 #include <iostream>
-#include <ostream
 #include <fstream>
 #include <vector>
 #include <algorithm>
@@ -13,7 +12,7 @@
 #include "egeometricos/Manzana.h"
 #include "egeometricos/Recurso.h"
 
-using std::string, std::ifstream, std::vector, std::cout, std::endl;
+using std::string, std::ifstream, std::vector, std::cout, std::endl, std::ofstream;
 
 
 
