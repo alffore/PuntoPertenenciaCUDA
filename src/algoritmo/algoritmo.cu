@@ -133,11 +133,14 @@ void marcaRecursos()
         }
     }
 
+    // Guardamos resultados
+    ofstream ofs("resultados.csv");
     for (auto &r : vrec)
     {
-        cout << "(" << r.stipo << "," << r.id << ") "
+        ofs  << "" << r.stipo << "," << r.id << ","
              << r.e << "," << r.m << ","<<r.l<<" "
-             << r.ne << "," << r.nm << ","<<r.nl<< ","<<r.sid_ageb<<","<<r.sid_mnz<<" :: "
+             << r.ne << "," << r.nm << ","<<r.nl<< ","<<r.sid_ageb<<","<<r.sid_mnz<<","
              << r.res << endl;
     }
+    ofs.close();
 }
