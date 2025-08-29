@@ -135,7 +135,7 @@ void marcaRecursos()
 
     // Guardamos resultados
     ofstream ofs("resultados.csv");
-    ofs << "tipo,id,e,m,l,ne,nm,nl,sid_ageb,sid_mnz,res" << endl;
+    ofs << "tipo,id,e,m,l,ne,nm,nl,ageb_sid,mnz_sid,res" << endl;
     for (auto &r : vrec)
     {
         ofs  << "" << r.stipo << "," << r.id << ","
