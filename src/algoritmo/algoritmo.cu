@@ -78,7 +78,7 @@ void algoritmo()
 
     //kernel Manzanas
     alojaMemMNZ(vmnz, host_dep,device_dep, host_drefp, device_drefp);
-    kernel_polpertenciaMNZ<<<canti_bloques, canti_hilos>>>(device_dep, device_drefp, device_pdrec, tam_rec, 0,50000/*vmnz.size()*/);
+    kernel_polpertenciaMNZ<<<canti_bloques, canti_hilos>>>(device_dep, device_drefp, device_pdrec, tam_rec, 0,/*50000*/vmnz.size());
     liberaMemMNZ(host_dep, device_dep, host_drefp, device_drefp);
 
     // recuperamos la memoria de los recursos
@@ -135,7 +135,7 @@ void marcaRecursos()
 
     // Guardamos resultados
     ofstream ofs("resultados.csv");
-    ofs << "tipo,id,e,m,l,ne,nm,nl,sid_ageb,sid_mnz,res" << endl;
+    ofs << "tipo,id,e,m,l,ne,nm,nl,ageb_sid,mnz_sid,res" << endl;
     for (auto &r : vrec)
     {
         ofs  << "" << r.stipo << "," << r.id << ","
