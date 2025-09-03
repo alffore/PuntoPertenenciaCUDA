@@ -78,7 +78,7 @@ void algoritmo()
 
     //kernel Manzanas
     alojaMemMNZ(vmnz, host_dep,device_dep, host_drefp, device_drefp);
-    kernel_polpertenciaMNZ<<<canti_bloques, canti_hilos>>>(device_dep, device_drefp, device_pdrec, tam_rec, 0,50000/*vmnz.size()*/);
+    kernel_polpertenciaMNZ<<<canti_bloques, canti_hilos>>>(device_dep, device_drefp, device_pdrec, tam_rec, 0,/*50000*/vmnz.size());
     liberaMemMNZ(host_dep, device_dep, host_drefp, device_drefp);
 
     // recuperamos la memoria de los recursos
