@@ -71,7 +71,7 @@ void algoritmo()
     alojaMemAGEB(vageb, host_dep,device_dep, host_drefp, device_drefp);
     kernel_polpertenciaAGEB<<<canti_bloques, canti_hilos>>>(device_dep, device_drefp, device_pdrec, tam_rec, 0,corte);
     liberaMemAGEB(host_dep, device_dep, host_drefp, device_drefp);
-    //cudaDeviceSynchronize();
+   
     alojaMemAGEB(vageb, host_dep,device_dep, host_drefp, device_drefp);
     kernel_polpertenciaAGEB<<<canti_bloques, canti_hilos>>>(device_dep, device_drefp, device_pdrec, tam_rec, corte,vageb.size());
     liberaMemAGEB(host_dep, device_dep, host_drefp, device_drefp);
