@@ -48,7 +48,7 @@ extern __global__ void kernel_polpertenciaMNZ(PDEP device_dep, PDRefP device_dre
  */
 void algoritmo()
 {
-
+    cudaSetDevice(1);
     size_t tam_rec = vrec.size();
 
     int canti_hilos = 1024;
